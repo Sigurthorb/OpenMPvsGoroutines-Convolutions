@@ -8,6 +8,7 @@ import "sync"
 
 //export Convolution
 func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels uint, kernelPtr *C.float, kSize uint) {
+	//OMP_NUM_THREADS
 	var wg sync.WaitGroup
 
 	kernelRowLen := kSize / 2
