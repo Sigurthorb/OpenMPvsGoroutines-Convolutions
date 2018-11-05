@@ -13,8 +13,7 @@ cWrapper: cLib
 
 cBin: cWrapper
 	g++ -c main.c `pkg-config --libs --cflags opencv` -ldl -lm -lrt -o bin/obj/main.o
-	g++ bin/obj/main.o -g -Lbin/static -lWrapper  `pkg-config --libs --cflags opencv` -ldl -lm -lrt -lpthread -o bin/cBin
-	rm -rf bin/obj/*
+	g++ bin/obj/main.o -Lbin/static -lWrapper  -lm -lpthread -fopenmp -o bin/cBin
 
 goLib:
 	go build -o ConvolutionLibrary/libConv.a -buildmode=c-archive ConvolutionLibrary/go/main.go
@@ -22,14 +21,13 @@ goLib:
 	cd bin/obj/ && ar -x libConv.a && rm -rf libConv.a
 
 goWrapper: goLib
-	# ConvolutionLibrary/libConv.a
-	g++ -c ConvolutionLibrary/libWrapper.c `pkg-config --libs --cflags opencv` -o bin/obj/libWrapper.o -ldl -lm -lrt -lpthread
+	g++ -c ConvolutionLibrary/libWrapper.c -lrt -lpthread -o bin/obj/libWrapper.o
 	ar rcs bin/static/libWrapper.a bin/obj/*.o
+	rm -rf bin/obj/*.o
 
 goBin: goWrapper
-	g++ -c main.c `pkg-config --libs --cflags opencv`  -ldl -lm -lrt -o bin/obj/main.o
-	g++ bin/obj/main.o -g -Lbin/static -lWrapper  `pkg-config --libs --cflags opencv` -ldl -lm -lrt -lpthread -o bin/goBin
-	rm -rf bin/obj/*
+	g++ -c main.c -Lbin/static -lWrapper -lm -o bin/obj/main.o
+	g++ bin/obj/main.o -Lbin/static -lWrapper -lm -lpthread -o bin/goBin
 
 clean:
 	rm -rf bin/

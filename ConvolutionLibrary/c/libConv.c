@@ -1,7 +1,7 @@
 
 #include "libConv.h"
 
-void Convolution(unsigned char* input, unsigned char* output, unsigned int height, unsigned int width, unsigned int channels, float* kernel, unsigned int kSize) {
+void Convolution(unsigned char* input, unsigned char* output, int height, int width, int channels, float* kernel, int kSize) {
     int i, j, l;
 
     // Placeholder to copy the input array to output array

@@ -7,7 +7,7 @@ import (
 import "sync"
 
 //export Convolution
-func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels uint, kernelPtr *C.float, kSize uint) {
+func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels int, kernelPtr *C.float, kSize int) {
 	//OMP_NUM_THREADS
 	var wg sync.WaitGroup
 
@@ -20,13 +20,13 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 	kernel := (*[1 << 30]C.float)(unsafe.Pointer(kernelPtr))[: kSize*kSize : kSize*kSize]
 
 	step := width * channels
-	var i, j uint
+	var i, j int
 	for i = 0; i < height; i++ {
 		for j = 0; j < width; j++ {
 			wg.Add(1)
-			go func(theI, theJ uint) {
+			go func(theI, theJ int) {
 
-				var startKRow, startKCol, maxKRowLen, maxKColLen, ai, aj, ac uint
+				var startKRow, startKCol, maxKRowLen, maxKColLen, ai, aj, ac int
 
 				startKRow = -kernelRowLen + theI
 				startKCol = -kernelColLen + theJ

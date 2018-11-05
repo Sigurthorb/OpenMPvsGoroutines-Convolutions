@@ -1,8 +1,14 @@
-
+#include <string.h>
+#include <stdlib.h>
 #include "libWrapper.h"
 #include "libConv.h"
 
-IplImage* img;
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
 
 int readImage(char* imagePath, struct Image* image) {
 
@@ -10,38 +16,46 @@ int readImage(char* imagePath, struct Image* image) {
         return -1;
     }
 
-    img = 0; 
-    img = cvLoadImage(imagePath);
+    image->data = stbi_load(imagePath, &image->width, &image->height, &image->channels, 0);
 
-    if(!img){
+    if(image->data == NULL) {
         return 0;
     }
-
-    image->data = (uchar *)img->imageData;
-    image->height = img->height;
-    image->width = img->width;
-    image->channels = img->nChannels;
 
     return 1;
 
 }
 
 int saveImage(char* imagePath, struct Image* image) {
-  if (imagePath == NULL || image == NULL) {
-      return 0;
-  }
+   char *dot = strrchr(imagePath, '.');
 
-  img->imageData = (char*)image->data;
-
-  return cvSaveImage(imagePath, img);
+   if (dot) {
+       int result = 0;
+       if (strcmp(dot, ".png") == 0) {
+           stbi_write_png(imagePath, image->width, image->height, image->channels, image->data, image->width*image->channels);
+       } else if (strcmp(dot, ".jpg") == 0) {
+           stbi_write_jpg(imagePath, image->width, image->height, image->channels, image->data, 90);
+       } /*else if (!strcmp(dot, ".bmp")) {
+           stbi_write_png(imageName, image->width, image->height, image->channels, image->data, sizeof(unsigned char)*image->width*image->height*image->channels)
+       } else if (!strcmp(dot, ".tga")) {
+           stbi_write_png(imageName, image->width, image->height, image->channels, image->data, sizeof(unsigned char)*image->width*image->height*image->channels)
+       } else if (!strcmp(dot, ".hdr")) {
+           stbi_write_png(imageName, image->width, image->height, image->channels, image->data, sizeof(unsigned char)*image->width*image->height*image->channels)
+       }*/ else {
+           return 0;
+       }
+   } else {
+       return -1;
+   }
 }
 
 int applyConvolution(struct Image* image, struct Kernel* kernel) {
     if (image == NULL || kernel == NULL) {
         return 0;
     }
-    uint length = image->width*image->height*image->channels+1;
-    uchar* newData = (uchar*)malloc(sizeof(uchar)*image->width*image->height*image->channels+1);
+
+    int length = image->width*image->height*image->channels+1;
+    unsigned char* newData = (unsigned char*)malloc(sizeof(unsigned char)*image->width*image->height*image->channels);
 
     Convolution(image->data, newData, image->height, image->width, image->channels, kernel->data, kernel->size);
 
@@ -77,5 +91,15 @@ int getGaussianKernel(int kSize, float sigma, struct Kernel* kernel) {
     kernel->size = kSize;
     kernel->data = (float*)malloc(sizeof(float)*length);
     
-    return 0;
+    return 0; // unsuccessfull return
+}
+
+void freeKernel(struct Kernel* kernel) {
+    free(kernel->data);
+    free(kernel);
+}
+
+void freeImage(struct Image* image) {
+    free(image->data);
+    free(image);
 }
