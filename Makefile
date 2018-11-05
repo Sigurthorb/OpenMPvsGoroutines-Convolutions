@@ -7,11 +7,11 @@ cLib:
 	g++ -c ConvolutionLibrary/libConv.c -o bin/obj/libConv.o
 
 cWrapper: cLib
-	g++ -c ConvolutionLibrary/libWrapper.c `pkg-config --libs --cflags opencv` -ldl -lm -lrt -lpthread -o bin/obj/libWrapper.o 
+	g++ -c ConvolutionLibrary/libWrapper.c -lm -lpthread -o bin/obj/libWrapper.o 
 	ar rcs bin/static/libWrapper.a bin/obj/libWrapper.o bin/obj/libConv.o
 
 cBin: cWrapper
-	g++ -c main.c `pkg-config --libs --cflags opencv` -ldl -lm -lrt -o bin/obj/main.o
+	g++ -c main.c -lm -o bin/obj/main.o
 	g++ bin/obj/main.o -Lbin/static -lWrapper  -lm -lpthread -fopenmp -o bin/cBin
 
 goLib:
