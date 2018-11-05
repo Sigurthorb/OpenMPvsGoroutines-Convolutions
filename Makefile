@@ -1,31 +1,35 @@
 
 setup:
-	mkdir -p bin/static
+	mkdir -p bin/obj
+	mkdir bin/static
 
 cLib:
 	cp ConvolutionLibrary/c/libConv.* ConvolutionLibrary/
-	g++ -c ConvolutionLibrary/libConv.c -o bin/static/libConv.o
+	g++ -c ConvolutionLibrary/libConv.c -o bin/obj/libConv.o
 
 cWrapper: cLib
-	g++ -c ConvolutionLibrary/libWrapper.c `pkg-config --libs --cflags opencv` -o bin/static/libWrapper.o -ldl -lm -lrt -lpthread
-	ar rcs bin/static/libWrapper.a bin/static/libWrapper.o bin/static/libConv.o
+	g++ -c ConvolutionLibrary/libWrapper.c `pkg-config --libs --cflags opencv` -ldl -lm -lrt -lpthread -o bin/obj/libWrapper.o 
+	ar rcs bin/static/libWrapper.a bin/obj/libWrapper.o bin/obj/libConv.o
 
 cBin: cWrapper
-	g++ -c main.c `pkg-config --libs --cflags opencv` -o bin/main.o -ldl -lm -lrt
-	g++ bin/main.o -g -Lbin/static -lWrapper -o bin/cBin `pkg-config --libs --cflags opencv` -ldl -lm -lrt -lpthread
+	g++ -c main.c `pkg-config --libs --cflags opencv` -ldl -lm -lrt -o bin/obj/main.o
+	g++ bin/obj/main.o -g -Lbin/static -lWrapper  `pkg-config --libs --cflags opencv` -ldl -lm -lrt -lpthread -o bin/cBin
+	rm -rf bin/obj/*
 
 goLib:
 	go build -o ConvolutionLibrary/libConv.a -buildmode=c-archive ConvolutionLibrary/go/main.go
-	cp ConvolutionLibrary/libConv.a bin/static/libConv.a
-	cp ConvolutionLibrary/libConv.h bin/static/libConv.h
+	cp ConvolutionLibrary/libConv.a bin/obj/libConv.a
+	cd bin/obj/ && ar -x libConv.a && rm -rf libConv.a
 
 goWrapper: goLib
-	g++ -c ConvolutionLibrary/libWrapper.c bin/static/libConv.a `pkg-config --libs --cflags opencv` -o bin/static/libWrapper.o -ldl -lm -lrt -lpthread
-	ar rcs bin/static/libWrapper.a bin/static/libConv.a bin/static/libWrapper.o 
+	# ConvolutionLibrary/libConv.a
+	g++ -c ConvolutionLibrary/libWrapper.c `pkg-config --libs --cflags opencv` -o bin/obj/libWrapper.o -ldl -lm -lrt -lpthread
+	ar rcs bin/static/libWrapper.a bin/obj/*.o
 
 goBin: goWrapper
-	g++ -c main.c `pkg-config --libs --cflags opencv` -o bin/main.o -ldl -lm -lrt
-	g++ bin/main.o -g -Lbin/static -lWrapper -lConv -o bin/goBin `pkg-config --libs --cflags opencv` -ldl -lm -lrt -lpthread
+	g++ -c main.c `pkg-config --libs --cflags opencv`  -ldl -lm -lrt -o bin/obj/main.o
+	g++ bin/obj/main.o -g -Lbin/static -lWrapper  `pkg-config --libs --cflags opencv` -ldl -lm -lrt -lpthread -o bin/goBin
+	rm -rf bin/obj/*
 
 clean:
 	rm -rf bin/
