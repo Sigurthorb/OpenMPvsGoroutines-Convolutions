@@ -94,7 +94,7 @@ int getGaussianKernel(int kSize, float sigma, struct Kernel* kernel) {
     kernel->size = kSize;
     kernel->data = (float*)malloc(sizeof(float)*length);
     
-    double dAlpha = 0
+    double dAlpha = 0;
     for (int row = 0; row < kSize; row++)
     {
         for (int col = 0; col < kSize; col++)

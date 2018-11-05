@@ -1,4 +1,3 @@
-
 setup:
 	mkdir -p bin/obj
 	mkdir bin/static

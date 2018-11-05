@@ -2,8 +2,8 @@
 #include "libConv.h"
 
 void Convolution(unsigned char* input, unsigned char* output, int height, int width, int channels, float* kernel, int kSize) {
-    int row, col, ch;
-    uchar ucValue = 0;
+    int row, col, ch, krow, kcol;
+    unsigned char ucValue = 0;
     double dValueKernel = 0;
     double dAgg = 0;
 
@@ -23,12 +23,12 @@ void Convolution(unsigned char* input, unsigned char* output, int height, int wi
                             (col - kSize / 2 + kcol) >= 0 && (col - kSize / 2 + kcol) < width)
                         {
                             ucValue = input[((row - kSize / 2 + krow) * width * channels) + ((col - kSize / 2 + kcol) * channels) + ch];
-                            dValueKernel = kernel[krow * ksize + kcol];
+                            dValueKernel = kernel[krow * kSize + kcol];
                             dAgg += ucValue * dValueKernel;
                         }
                     }
                 }
-                uchar ucAgg = (uchar)dAgg;
+                unsigned char ucAgg = dAgg;
                 if (dAgg - ucAgg >= 0.500000)
                 {
                     ucAgg += 1;
