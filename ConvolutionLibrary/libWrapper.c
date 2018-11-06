@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "libWrapper.h"
 #include "libConv.h"
 
@@ -47,6 +48,8 @@ int saveImage(char* imagePath, struct Image* image) {
    } else {
        return -1;
    }
+
+   return 1;
 }
 
 int applyConvolution(struct Image* image, struct Kernel* kernel) {
