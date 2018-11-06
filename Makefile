@@ -39,9 +39,10 @@ goBin: goWrapper
 	g++ -c $(OPTIMIZATION_FLAGS) main.c $(INCLUDE_FLAG) -lm -o $(OBJ_FOLDER)/main.o
 	g++ $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/main.o $(INCLUDE_FLAG) -o bin/goBin
 
-comparator: cWrapper
-	g++ -c otherCode/comparator.c $(INCLUDE_FLAG) -o $(OBJ_FOLDER)/comparator.o
-	g++ $(OBJ_FOLDER)/comparator.o $(INCLUDE_FLAG) -o bin/comp
+clean:
+	rm -rf bin/
+	rm -rf $(CONV_FOLDER)/libWrapper.o
+	rm -rf $(CONV_FOLDER)/libConv.*
 
 
 all: clean setup goBin cBin
