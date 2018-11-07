@@ -1,9 +1,8 @@
 package main
 
-import (
-	"C"
-	"unsafe"
-)
+// #include <math.h>
+import "C"
+import "unsafe"
 
 //export Convolution
 func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels int, kernelPtr *C.float, kSize int) {
@@ -48,7 +47,8 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 			}
 
 			for ac = 0; ac < channels; ac++ {
-				output[theI*step+theJ*channels+ac] = C.uchar(int(sum[ac]))
+
+				output[theI*step+theJ*channels+ac] = C.uchar(int(C.roundf(sum[ac])))
 			}
 			//wg.Done()
 			//}(i, j)
