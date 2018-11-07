@@ -19,14 +19,12 @@ cWrapper:
 	gcc -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libWrapper.c -lm -lpthread -o $(OBJ_FOLDER)/libWrapper.o 
 	ar rcs $(INCLUDE_FOLDER)/libWrapper.a $(OBJ_FOLDER)/libWrapper.o $(OBJ_FOLDER)/libConv.o
 	
-	
 goWrapper:
 	go build -o $(CONV_FOLDER)/libConv.a -buildmode=c-archive ConvolutionLibrary/go/main.go
 	cp $(CONV_FOLDER)/libConv.a $(OBJ_FOLDER)/libConv.a
 	cd $(OBJ_FOLDER)/ && ar -x libConv.a && rm -rf libConv.a
 	gcc -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libWrapper.c -lrt -lpthread -o $(OBJ_FOLDER)/libWrapper.o
 	ar rcs $(INCLUDE_FOLDER)/libWrapper.a $(OBJ_FOLDER)/*.o
-	
 
 cBin: cWrapper
 	gcc -c -flto $(OPTIMIZATION_FLAGS) main.c -lm -o $(OBJ_FOLDER)/main.o
@@ -38,9 +36,14 @@ goBin: goWrapper
 	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/main.o $(INCLUDE_FLAG) -o bin/goBin
 	rm -rf $(OBJ_FOLDER)/*.o
 
+tComp: cWrapper
+	gcc -c -flto $(OPTIMIZATION_FLAGS) otherCode/comparator_thor.c $(INCLUDE_FLAG) -o $(OBJ_FOLDER)/comparator.o
+	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/comparator.o $(INCLUDE_FLAG) -o bin/tComp
+	rm -rf $(OBJ_FOLDER)/*.o
+
 clean:
 	rm -rf bin/
 	rm -rf $(CONV_FOLDER)/libWrapper.o
 	rm -rf $(CONV_FOLDER)/libConv.*
 
-all: clean setup goBin cBin
+all: clean setup goBin cBin tComp

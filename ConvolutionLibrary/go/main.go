@@ -1,13 +1,12 @@
 package main
 
-// #cgo LDFLAGS: -lm
-// #include <math.h>
 import "C"
 import "unsafe"
 
 //export Convolution
 func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels int, kernelPtr *C.float, kSize int) {
-	//OMP_NUM_THREADS
+	// OMP_NUM_THREADS
+	// GOMAXPROCS
 	//var wg sync.WaitGroup
 	kernelRowLen := kSize / 2
 	kernelColLen := kSize / 2
@@ -46,10 +45,14 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 					}
 				}
 			}
-
+			var val C.float
 			for ac = 0; ac < channels; ac++ {
+				val = C.float(C.int(sum[ac]))
+				if (sum[ac] - val) >= 0.5 {
+					val++
+				}
 
-				output[theI*step+theJ*channels+ac] = C.uchar(int(C.roundf(sum[ac])))
+				output[theI*step+theJ*channels+ac] = C.uchar(val)
 			}
 			//wg.Done()
 			//}(i, j)
