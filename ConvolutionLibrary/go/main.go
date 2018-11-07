@@ -1,5 +1,6 @@
 package main
 
+// #cgo LDFLAGS: -lm
 // #include <math.h>
 import "C"
 import "unsafe"
