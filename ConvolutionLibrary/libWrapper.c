@@ -4,6 +4,7 @@
 #include "libWrapper.h"
 #include "libConv.h"
 
+#define STBI_FAILURE_USERMSG
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -20,22 +21,22 @@ int readImage(char* imagePath, struct Image* image) {
     image->data = stbi_load(imagePath, &image->width, &image->height, &image->channels, 0);
 
     if(image->data == NULL) {
+        printf("%s\n", stbi_failure_reason());
         return 0;
     }
 
     return 1;
-
 }
 
 int saveImage(char* imagePath, struct Image* image) {
    char *dot = strrchr(imagePath, '.');
-
+   int success = 0;
    if (dot) {
        int result = 0;
        if (strcmp(dot, ".png") == 0) {
-           stbi_write_png(imagePath, image->width, image->height, image->channels, image->data, image->width*image->channels);
+           success = stbi_write_png(imagePath, image->width, image->height, image->channels, image->data, image->width*image->channels);
        } else if (strcmp(dot, ".jpg") == 0) {
-           stbi_write_jpg(imagePath, image->width, image->height, image->channels, image->data, 90);
+           success = stbi_write_jpg(imagePath, image->width, image->height, image->channels, image->data, 90);
        } /*else if (!strcmp(dot, ".bmp")) {
            stbi_write_png(imageName, image->width, image->height, image->channels, image->data, sizeof(unsigned char)*image->width*image->height*image->channels)
        } else if (!strcmp(dot, ".tga")) {
@@ -49,7 +50,11 @@ int saveImage(char* imagePath, struct Image* image) {
        return -1;
    }
 
-   return 1;
+   if(!success) {
+        printf("%s\n", stbi_failure_reason());
+   }
+
+   return success;
 }
 
 int applyConvolution(struct Image* image, struct Kernel* kernel) {
