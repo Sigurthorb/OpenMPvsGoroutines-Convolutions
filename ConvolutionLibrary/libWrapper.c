@@ -97,15 +97,15 @@ int getGaussianKernel(int kSize, float sigma, struct Kernel* kernel) {
         return 0;
     }
 
-    int length = kSize*kSize;
+    int row, col, length = kSize*kSize;
 
     kernel->size = kSize;
     kernel->data = (float*)malloc(sizeof(float)*length);
     
     double dAlpha = 0;
-    for (int row = 0; row < kSize; row++)
+    for (row = 0; row < kSize; row++)
     {
-        for (int col = 0; col < kSize; col++)
+        for (col = 0; col < kSize; col++)
         {
             kernel->data[row * kSize + col] = exp((-pow(row - kSize/2, 2)-pow(col - kSize/2, 2))/(2 * M_PI * pow(sigma, 2)));
             dAlpha += kernel->data[row * kSize + col];
@@ -113,9 +113,9 @@ int getGaussianKernel(int kSize, float sigma, struct Kernel* kernel) {
     }
 
     // Normalize the values of the kernel so that they range from 0 to 1
-    for (int row = 0; row < kSize; row++)
+    for (row = 0; row < kSize; row++)
     {
-        for (int col = 0; col < kSize; col++)
+        for (col = 0; col < kSize; col++)
         {
             kernel->data[row * kSize + col] = kernel->data[row * kSize + col]/dAlpha;
         }
