@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #ifndef CONV_H_   /* Include guard */
 #define CONV_H_
