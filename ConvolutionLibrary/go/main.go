@@ -18,6 +18,7 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 	// GOMAXPROCS
 	var i, j int
 	routines := runtime.GOMAXPROCS(0)
+	print(routines)
 
 	var wg sync.WaitGroup
 	kernelRowLen := kSize / 2
@@ -77,14 +78,17 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 	}
 
 	stopChans := make([]chan int, routines)
-	coordChans := make([]chan coord, routines)
+	coordChan := make(chan coord, routines)
+
+	//coordChans := make([]chan coord, routines)
 
 	for i = 0; i < routines; i++ {
 		wg.Add(1)
 		stopChans[i] = make(chan int)
-		coordChans[i] = make(chan coord)
+		//coordChans[i] = make(chan coord)
 
-		go worker(stopChans[i], coordChans[i])
+		go worker(stopChans[i], coordChan)
+		//go worker(stopChans[i], coordChans[i])
 	}
 
 	counter := 0
@@ -94,7 +98,9 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 				counter = 0
 			}
 
-			coordChans[counter] <- coord{i, j}
+			//coordChans[counter] <- coord{i, j}
+			coordChan <- coord{i, j}
+
 			counter++
 		}
 	}
