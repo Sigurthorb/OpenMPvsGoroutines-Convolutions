@@ -62,13 +62,36 @@ int applyConvolution(struct Image* image, struct Kernel* kernel) {
         return 0;
     }
 
-    int length = image->width*image->height*image->channels+1;
-    unsigned char* newData = (unsigned char*)malloc(sizeof(unsigned char)*image->width*image->height*image->channels);
+    int height = image->height;
+    int width = image->width;
+    int channels = image->channels;
+    int kSize = kernel->size;
 
-    Convolution(image->data, newData, image->height, image->width, image->channels, kernel->data, kernel->size);
+    //int length = image->width*image->height*image->channels+1;
+    unsigned char* newData = (unsigned char*)malloc(sizeof(unsigned char)*width*height*channels);
 
+    // copy the input image to a zero padded memory block
+    int paddedInputHeight = height + (kSize/2) * 2;
+    int paddedInputWidth = width + (kSize/2) * 2;
+    unsigned char * paddedInput = (unsigned char *)calloc(paddedInputHeight * paddedInputWidth * channels, sizeof(unsigned char));
+    unsigned char * ptrInput = image->data;
+    unsigned char * ptrPaddedInput = paddedInput + (kSize/2) * paddedInputWidth * channels + (kSize/2) * channels;
+    for (int row = 0; row < height; row++)
+    {
+        memcpy((void *)ptrPaddedInput, (void *)ptrInput, width * channels);
+        ptrPaddedInput += paddedInputWidth * channels;
+        ptrInput += width * channels;
+    }
+
+    Convolution(paddedInput, newData, height, width, channels, kernel->data, kSize);
+
+    // free memory
+    ptrInput = NULL;
+    ptrPaddedInput = NULL;
+    free(paddedInput);
     free(image->data);
 
+    // replace new data with old data
     image->data = newData;
 
     return 1;
