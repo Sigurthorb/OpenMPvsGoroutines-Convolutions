@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+#include <sys/time.h>
 #include "ConvolutionLibrary/libWrapper.h"
 
 
@@ -53,10 +53,12 @@ int main(int argc, char **argv) {
   printf("Applying kernel by convolution\n");
 
   // Time convolution
-  clock_t start = clock();
+  struct timeval start, stop;
+  gettimeofday(&start, NULL);
   int convolutionSuccess = applyConvolution(image, kernel);
+  gettimeofday(&stop, NULL);
   // Print time difference
-  fprintf(stderr, "%.10f seconds\n", (double)(clock()- start)/CLOCKS_PER_SEC);
+  fprintf(stderr, "%ld.%ld seconds\n\n", stop.tv_sec - start.tv_sec, stop.tv_usec - start.tv_usec);
 
   if(convolutionSuccess == 0) {
     printf("Failed to apply convolution\n");
