@@ -2,6 +2,8 @@ package main
 
 import "C"
 import (
+	"fmt"
+	"os"
 	"runtime"
 	"sync"
 	"unsafe"
@@ -31,24 +33,22 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 	output := (*[1 << 31]C.uchar)(unsafe.Pointer(outputPtr))[:length:length]
 	kernel := (*[1 << 31]C.float)(unsafe.Pointer(kernelPtr))[: kSize*kSize : kSize*kSize]
 
-	worker := func(stopChan chan int, coordChan chan coord) {
+	worker := func(id int) {
 		//runtime.LockOSThread()
-		var coordinates coord
-		var startKRow, startKCol, maxKRowLen, maxKColLen, ai, aj, ac, x, y int
+		var startKRow, startKCol, maxKRowLen, maxKColLen, ai, aj, ac, r, c int
 		var val C.float
 
-		for true {
+		counter := 0
 
-			select {
-			case coordinates = <-coordChan:
-				x = coordinates.x
-				y = coordinates.y
+		for r = id; i < height; i += routines {
+			counter += 1
+			for c = 0; j < width; j++ {
 
-				startKRow = -kernelRowLen + x
-				startKCol = -kernelColLen + y
+				startKRow = -kernelRowLen + r
+				startKCol = -kernelColLen + c
 
-				maxKRowLen = kernelRowLen + x
-				maxKColLen = kernelColLen + y
+				maxKRowLen = kernelRowLen + r
+				maxKColLen = kernelColLen + c
 
 				var sum = []C.float{0.0, 0.0, 0.0}
 
@@ -62,54 +62,28 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 						}
 					}
 				}
+
 				for ac = 0; ac < channels; ac++ {
 					val = C.float(C.int(sum[ac]))
 					if (sum[ac] - val) >= 0.5 {
 						val++
 					}
 
-					output[x*step+y*channels+ac] = C.uchar(val)
+					output[r*step+c*channels+ac] = C.uchar(val)
 				}
-
-			case <-stopChan:
-				//runtime.UnlockOSThread()
-				wg.Done()
-				return
 			}
 		}
+		fmt.Fprintln(os.Stderr, "Worker", id, "executed", counter, "number of lines")
+		wg.Done()
 	}
 
-	stopChans := make([]chan int, routines)
-	coordChan := make(chan coord, routines)
-
-	//coordChans := make([]chan coord, routines)
-
-	for i = 0; i < routines; i++ {
+	for i = 0; i < routines-1; i++ {
 		wg.Add(1)
-		stopChans[i] = make(chan int)
-		//coordChans[i] = make(chan coord)
-
-		go worker(stopChans[i], coordChan)
-		//go worker(stopChans[i], coordChans[i])
+		go worker(i)
 	}
 
-	counter := 0
-	for i = 0; i < height; i++ {
-		for j = 0; j < width; j++ {
-			if counter >= routines {
-				counter = 0
-			}
-
-			//coordChans[counter] <- coord{i, j}
-			coordChan <- coord{i, j}
-
-			counter++
-		}
-	}
-
-	for i = 0; i < routines; i++ {
-		stopChans[i] <- 1
-	}
+	wg.Add(1)
+	worker(routines - 1)
 
 	wg.Wait()
 }
