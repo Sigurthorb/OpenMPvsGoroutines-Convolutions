@@ -1,3 +1,4 @@
+#include <stdlib.h>
 
 #ifndef CONV_H_   /* Include guard */
 #define CONV_H_
