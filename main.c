@@ -58,7 +58,8 @@ int main(int argc, char **argv) {
   int convolutionSuccess = applyConvolution(image, kernel);
   gettimeofday(&stop, NULL);
   // Print time difference
-  fprintf(stderr, "%ld.%ld seconds\n\n", stop.tv_sec - start.tv_sec, stop.tv_usec - start.tv_usec);
+  long int microseconds = (stop.tv_sec - start.tv_sec) * 1000000L + (stop.tv_usec - start.tv_usec);
+  fprintf(stderr, "%ld.%ld seconds\n", (stop.tv_sec - start.tv_sec), microseconds - (microseconds/1000000L));
 
   if(convolutionSuccess == 0) {
     printf("Failed to apply convolution\n");
