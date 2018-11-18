@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
   gettimeofday(&stop, NULL);
   // Print time difference
   long int microseconds = (stop.tv_sec - start.tv_sec) * 1000000L + (stop.tv_usec - start.tv_usec);
-  fprintf(stderr, "%ld.%ld seconds\n", (stop.tv_sec - start.tv_sec), microseconds - (microseconds/1000000L));
+  fprintf(stderr, "%ld.%ld seconds\n", microseconds/1000000L, microseconds - (microseconds/1000000L));
 
   if(convolutionSuccess == 0) {
     printf("Failed to apply convolution\n");
