@@ -2,8 +2,6 @@ package main
 
 import "C"
 import (
-	"fmt"
-	"os"
 	"runtime"
 	"sync"
 	"unsafe"
@@ -18,7 +16,7 @@ type coord struct {
 func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels int, kernelPtr *C.float, kSize int) {
 	// OMP_NUM_THREADS
 	// GOMAXPROCS
-	var i, j int
+	var i int
 	routines := runtime.GOMAXPROCS(0)
 	//print(routines)
 
@@ -34,15 +32,13 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 	kernel := (*[1 << 31]C.float)(unsafe.Pointer(kernelPtr))[: kSize*kSize : kSize*kSize]
 
 	worker := func(id int) {
-		//runtime.LockOSThread()
+		runtime.LockOSThread()
 		var startKRow, startKCol, maxKRowLen, maxKColLen, ai, aj, ac, r, c int
 		var val C.float
+		var sum []C.float
 
-		counter := 0
-
-		for r = id; i < height; i += routines {
-			counter += 1
-			for c = 0; j < width; j++ {
+		for r = id; r < height; r += routines {
+			for c = 0; c < width; c++ {
 
 				startKRow = -kernelRowLen + r
 				startKCol = -kernelColLen + c
@@ -50,7 +46,7 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 				maxKRowLen = kernelRowLen + r
 				maxKColLen = kernelColLen + c
 
-				var sum = []C.float{0.0, 0.0, 0.0}
+				sum = []C.float{0.0, 0.0, 0.0}
 
 				for ai = startKRow; ai <= maxKRowLen; ai++ {
 					for aj = startKCol; aj <= maxKColLen; aj++ {
@@ -73,7 +69,7 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 				}
 			}
 		}
-		fmt.Fprintln(os.Stderr, "Worker", id, "executed", counter, "number of lines")
+		runtime.UnlockOSThread()
 		wg.Done()
 	}
 
