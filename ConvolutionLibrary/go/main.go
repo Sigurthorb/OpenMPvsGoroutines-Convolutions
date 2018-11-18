@@ -18,7 +18,7 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 	// GOMAXPROCS
 	var i, j int
 	routines := runtime.GOMAXPROCS(0)
-	print(routines)
+	//print(routines)
 
 	var wg sync.WaitGroup
 	kernelRowLen := kSize / 2
@@ -32,6 +32,7 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 	kernel := (*[1 << 31]C.float)(unsafe.Pointer(kernelPtr))[: kSize*kSize : kSize*kSize]
 
 	worker := func(stopChan chan int, coordChan chan coord) {
+		//runtime.LockOSThread()
 		var coordinates coord
 		var startKRow, startKCol, maxKRowLen, maxKColLen, ai, aj, ac, x, y int
 		var val C.float
@@ -71,6 +72,7 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 				}
 
 			case <-stopChan:
+				//runtime.UnlockOSThread()
 				wg.Done()
 				return
 			}
