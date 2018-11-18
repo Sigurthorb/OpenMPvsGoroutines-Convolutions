@@ -15,8 +15,8 @@ setup:
 	
 cWrapper:
 	cp $(C_FOLDER)/libConv.* $(CONV_FOLDER)/
-	gcc -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libConv.c -o $(OBJ_FOLDER)/libConv.o
-	gcc -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libWrapper.c -lm -lpthread -o $(OBJ_FOLDER)/libWrapper.o 
+	gcc -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libConv.c -fopenmp -o $(OBJ_FOLDER)/libConv.o
+	gcc -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libWrapper.c -lm -lpthread -fopenmp -o $(OBJ_FOLDER)/libWrapper.o 
 	ar rcs $(INCLUDE_FOLDER)/libWrapper.a $(OBJ_FOLDER)/libWrapper.o $(OBJ_FOLDER)/libConv.o
 	
 goWrapper:
@@ -27,7 +27,7 @@ goWrapper:
 	ar rcs $(INCLUDE_FOLDER)/libWrapper.a $(OBJ_FOLDER)/*.o
 
 cBin: cWrapper
-	gcc -c -flto $(OPTIMIZATION_FLAGS) main.c -lm -o $(OBJ_FOLDER)/main.o
+	gcc -c -flto $(OPTIMIZATION_FLAGS) main.c -lm -fopenmp -o $(OBJ_FOLDER)/main.o
 	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/main.o $(INCLUDE_FLAG) -fopenmp -o bin/cBin
 	rm -rf $(OBJ_FOLDER)/*.o
 
@@ -37,8 +37,8 @@ goBin: goWrapper
 	rm -rf $(OBJ_FOLDER)/*.o
 
 tComp: cWrapper
-	gcc -c -flto $(OPTIMIZATION_FLAGS) otherCode/comparator_thor.c $(INCLUDE_FLAG) -o $(OBJ_FOLDER)/comparator.o
-	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/comparator.o $(INCLUDE_FLAG) -o bin/tComp
+	gcc -c -flto $(OPTIMIZATION_FLAGS) otherCode/comparator_thor.c $(INCLUDE_FLAG) -fopenmp -o $(OBJ_FOLDER)/comparator.o
+	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/comparator.o $(INCLUDE_FLAG) -fopenmp -o bin/tComp
 	rm -rf $(OBJ_FOLDER)/*.o
 
 clean:
