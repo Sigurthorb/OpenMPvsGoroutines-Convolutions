@@ -1,5 +1,11 @@
 
 #include "libConv.h"
+#include <omp.h>
+#include <stdio.h>
+
+int numthreads;
+
+
 
 void Convolution(unsigned char* input, unsigned char* output, int height, int width, int channels, float* kernel, int kSize) {
     int row, col, ch, krow, kcol;
@@ -8,6 +14,15 @@ void Convolution(unsigned char* input, unsigned char* output, int height, int wi
     double * dAgg = (double *)malloc(sizeof(double) * channels);
     unsigned char ucAgg = 0;
 
+    #ifdef _OPENMP
+       numthreads=omp_get_max_threads();
+    #else
+       numthreads=1;
+    #endif
+
+    printf("%d\n", numthreads);
+
+    #pragma omp parallel for num_threads(omp_get_max_threads()), private(row, col, ch, krow, kcol, ucValue, dValueKernel, dAgg, ucAgg)
     for(row = 0; row < height; row++)
     {
         for(col = 0; col < width; col++)
