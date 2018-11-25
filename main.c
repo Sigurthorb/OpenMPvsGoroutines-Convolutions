@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
+#include <unistd.h>
 #include "ConvolutionLibrary/libWrapper.h"
 
 
@@ -21,14 +22,16 @@ int main(int argc, char **argv) {
   struct Image* image = (struct Image*)malloc(sizeof(struct Image));
   struct Kernel* kernel = (struct Kernel*)malloc(sizeof(struct Kernel));
   
-  printf("Reading image\n");
+  pid_t processID = getpid();
+
+  printf("%d: Reading image\n", processID);
   int readImageSuccess = readImage(input, image);
   if(!readImageSuccess) {
     printf("Failed to read image\n");
     exit(1);
   }
 
-  printf("Generating Kernel '%s'\n", kernelName);
+  printf("%d: Generating Kernel '%s'\n", processID, kernelName);
   int kernelSuccess = 0;
   if (strcmp("gauss", kernelName) == 0) {
     if (argc < 6) {
@@ -50,7 +53,7 @@ int main(int argc, char **argv) {
     exit(1);
   }
 
-  printf("Applying kernel by convolution\n");
+  printf("%d: Applying kernel by convolution\n", processID);
 
   // Time convolution
   struct timeval start, stop;
@@ -59,14 +62,14 @@ int main(int argc, char **argv) {
   gettimeofday(&stop, NULL);
   // Print time difference
   long int microseconds = (stop.tv_sec - start.tv_sec) * 1000000L + (stop.tv_usec - start.tv_usec);
-  fprintf(stderr, "%ld.%ld seconds\n", microseconds/1000000L, microseconds - (microseconds/1000000L));
+  fprintf(stderr, "%d: %ld.%ld seconds\n", processID, microseconds/1000000L, microseconds - (microseconds/1000000L));
 
   if(convolutionSuccess == 0) {
     printf("Failed to apply convolution\n");
     exit(1);
   }
 
-  printf("Saving image\n");
+  printf("%d: Saving image\n", processID);
   int saveImageSuccess = saveImage(output, image);
   if(saveImageSuccess == 0) {
     printf("Failed to save image\n");

@@ -62,6 +62,7 @@ int applyConvolution(struct Image* image, struct Kernel* kernel) {
         return 0;
     }
 
+    int row = 0;
     int height = image->height;
     int width = image->width;
     int channels = image->channels;
@@ -76,7 +77,7 @@ int applyConvolution(struct Image* image, struct Kernel* kernel) {
     unsigned char * paddedInput = (unsigned char *)calloc(paddedInputHeight * paddedInputWidth * channels, sizeof(unsigned char));
     unsigned char * ptrInput = image->data;
     unsigned char * ptrPaddedInput = paddedInput + (kSize/2) * paddedInputWidth * channels + (kSize/2) * channels;
-    for (int row = 0; row < height; row++)
+    for (row = 0; row < height; row++)
     {
         memcpy((void *)ptrPaddedInput, (void *)ptrInput, width * channels);
         ptrPaddedInput += paddedInputWidth * channels;
