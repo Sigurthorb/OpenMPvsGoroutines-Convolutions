@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     exit(1);
   }
 
-  printf("%d: Generating Kernel '%s'\n", processID, kernelName);
+  printf("%d: Generating Kernel '%s' of size '%d'\n", processID, kernelName, kernelSize);
   int kernelSuccess = 0;
   if (strcmp("gauss", kernelName) == 0) {
     if (argc < 6) {
