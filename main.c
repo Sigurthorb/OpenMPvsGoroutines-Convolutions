@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
   
   pid_t processID = getpid();
 
-  printf("%d: Reading image\n", processID);
+  printf("%d: Reading image '%s'\n", processID, argv[1]);
   int readImageSuccess = readImage(input, image);
   if(!readImageSuccess) {
     printf("Failed to read image\n");
