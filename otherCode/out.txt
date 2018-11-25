@@ -1,0 +1,72 @@
+
+1. Comparing opencv_mean_5_out.png and goBin_mean_5_out.png
+% pixels having 1 unit difference: 20.474693
+% pixels having 2 unit difference: 0.002577
+% pixels having 3 or more unit difference: 0.000000
+Wrong
+
+2. Comparing opencv_mean_5_out.png and cBin_mean_5_out.png
+% pixels having 1 unit difference: 20.474693
+% pixels having 2 unit difference: 0.002577
+% pixels having 3 or more unit difference: 0.000000
+Wrong
+
+3. Comparing cBin_mean_5_out.png and goBin_mean_5_out.png
+% pixels having 1 unit difference: 0.000000
+% pixels having 2 unit difference: 0.000000
+% pixels having 3 or more unit difference: 0.000000
+Correct
+
+4. Comparing python_mean_5_out.png and opencv_mean_5_out.png
+% pixels having 1 unit difference: 0.000000
+% pixels having 2 unit difference: 0.000000
+% pixels having 3 or more unit difference: 0.000000
+Correct
+
+5. Comparing python_mean_5_out.png and cBin_mean_5_out.png
+% pixels having 1 unit difference: 19.799505
+% pixels having 2 unit difference: 0.002577
+% pixels having 3 or more unit difference: 0.000000
+Wrong
+
+6. Comparing python_mean_5_out.png and goBin_mean_5_out.png
+% pixels having 1 unit difference: 19.799505
+% pixels having 2 unit difference: 0.002577
+% pixels having 3 or more unit difference: 0.000000
+Wrong
+
+7. Comparing opencv_gauss_5_3_out.png and goBin_gauss_5_3_out.png
+% pixels having 1 unit difference: 20.572622
+% pixels having 2 unit difference: 0.007731
+% pixels having 3 or more unit difference: 0.000000
+Wrong
+
+8. Comparing opencv_gauss_5_3_out.png and cBin_gauss_5_3_out.png
+% pixels having 1 unit difference: 20.570044
+% pixels having 2 unit difference: 0.007731
+% pixels having 3 or more unit difference: 0.000000
+Wrong
+
+9. Comparing cBin_gauss_5_3_out.png and goBin_gauss_5_3_out.png
+% pixels having 1 unit difference: 0.002577
+% pixels having 2 unit difference: 0.000000
+% pixels having 3 or more unit difference: 0.000000
+Wrong
+
+10. Comparing python_gauss_5_3_out.png and opencv_gauss_5_3_out.png
+% pixels having 1 unit difference: 0.002577
+% pixels having 2 unit difference: 0.000000
+% pixels having 3 or more unit difference: 0.000000
+Wrong
+
+11. Comparing python_gauss_5_3_out.png and goBin_gauss_5_3_out.png
+% pixels having 1 unit difference: 19.936089
+% pixels having 2 unit difference: 0.007731
+% pixels having 3 or more unit difference: 0.000000
+Wrong
+
+12. Comparing python_gauss_5_3_out.png and cBin_gauss_5_3_out.png
+% pixels having 1 unit difference: 19.933512
+% pixels having 2 unit difference: 0.007731
+% pixels having 3 or more unit difference: 0.000000
+Wrong
