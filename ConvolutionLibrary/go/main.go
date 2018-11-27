@@ -1,65 +1,98 @@
 package main
 
 import "C"
-import "unsafe"
+import (
+	"runtime"
+	"sync"
+	"unsafe"
+)
 
 //export Convolution
 func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels int, kernelPtr *C.float, kSize int) {
-	// OMP_NUM_THREADS
-	// GOMAXPROCS
-	//var wg sync.WaitGroup
-	kernelRowLen := kSize / 2
-	kernelColLen := kSize / 2
-	length := height * width * channels
+	var wg sync.WaitGroup
 
-	input := (*[1 << 31]C.uchar)(unsafe.Pointer(inputPtr))[:length:length]
-	output := (*[1 << 31]C.uchar)(unsafe.Pointer(outputPtr))[:length:length]
+	routines := runtime.GOMAXPROCS(0)
+	k := kSize / 2
+	padding := kSize - 1
+
+	inputStep := (width + padding) * channels
+	outputStep := width * channels
+
+	input := (*[1 << 31]C.uchar)(unsafe.Pointer(inputPtr))[: (height+padding)*inputStep : (height+padding)*inputStep]
+	output := (*[1 << 31]C.uchar)(unsafe.Pointer(outputPtr))[: height*outputStep : height*outputStep]
 	kernel := (*[1 << 31]C.float)(unsafe.Pointer(kernelPtr))[: kSize*kSize : kSize*kSize]
 
-	step := width * channels
-	var i, j int
-	for i = 0; i < height; i++ {
-		for j = 0; j < width; j++ {
-			//wg.Add(1)
-			//func(theI, theJ int) {
-			theI := i
-			theJ := j
+	worker := func(id int) {
+		//fmt.Println("JUST JOINED THE PARTY -- ", id)
+		runtime.LockOSThread()
+		var startKRow, startKCol, endKRow, endKCol, ai, aj, ac, rInput, cInput, rOutput, cOutput, channelStartLoc int
+		var val C.float
+		var sum []C.float
 
-			var startKRow, startKCol, maxKRowLen, maxKColLen, ai, aj, ac int
+		rInput = id + k
+		rOutput = id
 
-			startKRow = -kernelRowLen + theI
-			startKCol = -kernelColLen + theJ
+		for rInput < height+k {
+			cInput = k
+			cOutput = 0
+			for cInput < width+k {
 
-			maxKRowLen = kernelRowLen + theI
-			maxKColLen = kernelColLen + theJ
+				startKRow = rInput - k
+				startKCol = cInput - k
 
-			var sum = []C.float{0.0, 0.0, 0.0}
+				endKRow = rInput + k
+				endKCol = cInput + k
 
-			for ai = startKRow; ai <= maxKRowLen; ai++ {
-				for aj = startKCol; aj <= maxKColLen; aj++ {
-					for ac = 0; ac < channels; ac++ {
-						if ai < 0 || aj < 0 || ai >= height || aj >= width {
-							continue
+				sum = []C.float{0.0, 0.0, 0.0, 0.0}
+
+				for ai = startKRow; ai <= endKRow; ai++ {
+					for aj = startKCol; aj <= endKCol; aj++ {
+						channelStartLoc = ai*inputStep + aj*channels
+						for ac = 0; ac < channels; ac++ {
+							//fmt.Println(rInput, cInput)
+							//fmt.Println("row:", rInput, ", col:", cInput, ", channel:", ac, ", indx:", channelStartLoc+ac, ", inputStep:", inputStep, ", height:", height+k) // ", d:", ", d:", (height+padding)*inputStep)
+							//fmt.Println()
+							var test = kernel[(ai-startKRow)*kSize+(aj-startKCol)]
+							sum[ac] += C.float(input[channelStartLoc+ac]) * test
 						}
-						sum[ac] += C.float(input[ai*step+aj*channels+ac]) * kernel[(ai-startKRow)*kSize+(aj-startKCol)]
 					}
 				}
-			}
-			var val C.float
-			for ac = 0; ac < channels; ac++ {
-				val = C.float(C.int(sum[ac]))
-				if (sum[ac] - val) >= 0.5 {
-					val++
+
+				channelStartLoc = rOutput*outputStep + cOutput*channels
+
+				for ac = 0; ac < channels; ac++ {
+					val = C.float(C.int(sum[ac]))
+					if (sum[ac] - val) >= 0.5 {
+						val++
+					}
+
+					output[channelStartLoc+ac] = C.uchar(val)
 				}
 
-				output[theI*step+theJ*channels+ac] = C.uchar(val)
+				cInput++
+				cOutput++
+
 			}
+
+			//runtime.UnlockOSThread()
 			//wg.Done()
-			//}(i, j)
+			//return
+			rInput += routines
+			rOutput += routines
 		}
+		runtime.UnlockOSThread()
+		wg.Done()
 	}
 
-	//wg.Wait()
+	for i := 0; i < routines-1; i++ {
+		wg.Add(1)
+		go worker(i)
+	}
+
+	wg.Add(1)
+	worker(routines - 1)
+
+	wg.Wait()
 }
 
 func main() {}
