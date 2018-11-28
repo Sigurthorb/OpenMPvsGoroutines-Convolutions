@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH -N 1
-#SBATCH --mem=5120000
+#SBATCH --mem=140000
 #SBATCH --exclusive
 #SBATCH -t 01:00:00
 
