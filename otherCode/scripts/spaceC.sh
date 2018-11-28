@@ -49,6 +49,9 @@ function all() {
 }
 
 echo "-- $IMAGE -- $BIN -- "
+echo "NUM_CPU:"
+nproc --all
+echo ""
 time all
 echo "-- $IMAGE -- $BIN -- "
 
