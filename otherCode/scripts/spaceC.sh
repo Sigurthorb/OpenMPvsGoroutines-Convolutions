@@ -30,26 +30,26 @@ function run() {
 
     for i in {1..2}
     do
-        ./bin/$BIN input/$IMAGE.$EXT output_$IMAGE/${IMAGE}_${BIN}_n${threads}_$kernel-$size.$EXT $kernel $size $sigma 1> /dev/null
+        ./bin/$BIN input/$IMAGE.$EXT output_$IMAGE/${IMAGE}.$EXT $kernel $size $sigma 1> /dev/null
     done
     echo ""
 }
 
+function all() {
+    run gauss 5 20 3.0
+    run gauss 5 40 3.0
+
+
+    run gauss 13 20 3.0
+    run gauss 13 40 3.0
+
+
+    run gauss 25 20 3.0
+    run gauss 25 40 3.0
+}
+
 echo "-- $IMAGE -- $BIN -- "
-
-run gauss 5 20 3.0
-run gauss 5 40 3.0
-
-
-run gauss 13 20 3.0
-run gauss 13 40 3.0
-
-
-run gauss 25 20 3.0
-run gauss 25 40 3.0
-
+time all
 echo "-- $IMAGE -- $BIN -- "
-
-
 
 

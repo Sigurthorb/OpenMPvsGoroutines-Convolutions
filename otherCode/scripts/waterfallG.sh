@@ -35,25 +35,26 @@ function run() {
     echo ""
 }
 
+function all() {
+    run gauss 5 1 3.0
+    run gauss 5 10 3.0
+    run gauss 5 20 3.0
+    run gauss 5 40 3.0
+
+
+    run gauss 13 1 3.0
+    run gauss 13 10 3.0
+    run gauss 13 20 3.0
+    run gauss 13 40 3.0
+
+    run gauss 25 1 3.0
+    run gauss 25 10 3.0
+    run gauss 25 20 3.0
+    run gauss 25 40 3.0
+}
+
 echo "-- $IMAGE -- $BIN -- "
-
-run gauss 5 1 3.0
-run gauss 5 10 3.0
-run gauss 5 20 3.0
-run gauss 5 40 3.0
-
-
-run gauss 13 1 3.0
-run gauss 13 10 3.0
-run gauss 13 20 3.0
-run gauss 13 40 3.0
-
-
-run gauss 25 1 3.0
-run gauss 25 10 3.0
-run gauss 25 20 3.0
-run gauss 25 40 3.0
-
+time all
 echo "-- $IMAGE -- $BIN -- "
 
 
