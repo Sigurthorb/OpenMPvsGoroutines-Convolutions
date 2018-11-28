@@ -1,27 +1,20 @@
 #!/bin/bash
 
-cd /lustre/cmsc714-1nzb/final/repo
+cd /lustre/cmsc714-1nzb/final/
 
-module load gcc
-module load go
+sbatch repo/otherCode/scripts/spaceC.sh
+sbatch repo/otherCode/scripts/spaceG.sh
 
-make all
+sbatch repo/otherCode/scripts/houseC.sh
+sbatch repo/otherCode/scripts/houseG.sh
 
-chmod +x otherCode/scripts/*.sh
+sbatch repo/otherCode/scripts/lionessC.sh
+sbatch repo/otherCode/scripts/lionessG.sh
 
-sbatch otherCode/scripts/spaceC.sh
-sbatch otherCode/scripts/spaceG.sh
+sbatch repo/otherCode/scripts/waterfallC.sh
+sbatch repo/otherCode/scripts/waterfallG.sh
 
-#sbatch otherCode/scripts/houseC.sh
-sbatch otherCode/scripts/houseG.sh
-
-#sbatch otherCode/scripts/lionessC.sh
-sbatch otherCode/scripts/lionessG.sh
-
-#sbatch otherCode/scripts/waterfallC.sh
-sbatch otherCode/scripts/waterfallG.sh
-
-#sbatch otherCode/scripts/ladyC.sh
-sbatch otherCode/scripts/ladyG.sh
+sbatch repo/otherCode/scripts/ladyC.sh
+sbatch repo/otherCode/scripts/ladyG.sh
 
 
