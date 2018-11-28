@@ -23,7 +23,6 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 	kernel := (*[1 << 31]C.float)(unsafe.Pointer(kernelPtr))[: kSize*kSize : kSize*kSize]
 
 	worker := func(id int) {
-		//fmt.Println("JUST JOINED THE PARTY -- ", id)
 		runtime.LockOSThread()
 		var startKRow, startKCol, endKRow, endKCol, ai, aj, ac, rInput, cInput, rOutput, cOutput, channelStartLoc int
 		var val C.float
@@ -49,11 +48,7 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 					for aj = startKCol; aj <= endKCol; aj++ {
 						channelStartLoc = ai*inputStep + aj*channels
 						for ac = 0; ac < channels; ac++ {
-							//fmt.Println(rInput, cInput)
-							//fmt.Println("row:", rInput, ", col:", cInput, ", channel:", ac, ", indx:", channelStartLoc+ac, ", inputStep:", inputStep, ", height:", height+k) // ", d:", ", d:", (height+padding)*inputStep)
-							//fmt.Println()
-							var test = kernel[(ai-startKRow)*kSize+(aj-startKCol)]
-							sum[ac] += C.float(input[channelStartLoc+ac]) * test
+							sum[ac] += C.float(input[channelStartLoc+ac]) * kernel[(ai-startKRow)*kSize+(aj-startKCol)]
 						}
 					}
 				}
@@ -74,9 +69,6 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 
 			}
 
-			//runtime.UnlockOSThread()
-			//wg.Done()
-			//return
 			rInput += routines
 			rOutput += routines
 		}
