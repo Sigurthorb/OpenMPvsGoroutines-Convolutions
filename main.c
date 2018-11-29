@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
   }
 
   printf("Saving image\n");
-  int saveImageSuccess = saveImage(output, image);
+  int saveImageSuccess = writeImage(output, image);
   if(saveImageSuccess == 0) {
     printf("Failed to save image\n");
     exit(1);

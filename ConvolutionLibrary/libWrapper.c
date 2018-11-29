@@ -28,7 +28,7 @@ int readImage(char* imagePath, struct Image* image) {
     return 1;
 }
 
-int saveImage(char* imagePath, struct Image* image) {
+int writeImage(char* imagePath, struct Image* image) {
    char *dot = strrchr(imagePath, '.');
    int success = 0;
    if (dot) {

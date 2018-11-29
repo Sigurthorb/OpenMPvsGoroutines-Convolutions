@@ -24,8 +24,6 @@ int main(int argc, char **argv) {
     for(; i < image1->width*image1->height*image1->channels; i++) {
         if(image1->data[i] == image2->data[i]) {
             correct++;
-        } else {
-            printf("%d - %d\n", image1->data[i], image2->data[i]);
         }
         total++;
     }

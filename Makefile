@@ -15,8 +15,8 @@ setup:
 	
 cWrapper:
 	cp $(C_FOLDER)/libConv.* $(CONV_FOLDER)/
-	gcc -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libConv.c -fopenmp -o $(OBJ_FOLDER)/libConv.o
-	gcc -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libWrapper.c -lm -o $(OBJ_FOLDER)/libWrapper.o 
+	gcc-8 -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libConv.c -fopenmp -o $(OBJ_FOLDER)/libConv.o
+	gcc-8 -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libWrapper.c -lm -o $(OBJ_FOLDER)/libWrapper.o 
 	ar rcs $(INCLUDE_FOLDER)/libWrapper.a $(OBJ_FOLDER)/libWrapper.o $(OBJ_FOLDER)/libConv.o
 	rm -rf $(OBJ_FOLDER)/*.o	
 	
@@ -24,28 +24,36 @@ goWrapper:
 	go build -o $(CONV_FOLDER)/libConv.a -buildmode=c-archive ConvolutionLibrary/go/main.go
 	cp $(CONV_FOLDER)/libConv.a $(OBJ_FOLDER)/libConv.a
 	cd $(OBJ_FOLDER)/ && ar -x libConv.a && rm -rf libConv.a
-	gcc -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libWrapper.c -lrt -o $(OBJ_FOLDER)/libWrapper.o
+	gcc-8 -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libWrapper.c -lrt -o $(OBJ_FOLDER)/libWrapper.o
 	ar rcs $(INCLUDE_FOLDER)/libWrapper.a $(OBJ_FOLDER)/*.o
 	rm -rf $(OBJ_FOLDER)/*.o
 
 cBin: cWrapper
-	gcc -c -flto $(OPTIMIZATION_FLAGS) main.c  -lm -o $(OBJ_FOLDER)/main.o
-	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/main.o $(INCLUDE_FLAG) -fopenmp -o bin/cBin
-	rm -rf $(OBJ_FOLDER)/*.o
+	gcc-8 -c -flto $(OPTIMIZATION_FLAGS) main.c  -lm -o $(OBJ_FOLDER)/main.o
+	gcc-8 -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/main.o $(INCLUDE_FLAG) -fopenmp -o bin/cBin
+	make cleanLib
 
 goBin: goWrapper
-	gcc -c -flto $(OPTIMIZATION_FLAGS) main.c $(INCLUDE_FLAG) -lm -o $(OBJ_FOLDER)/main.o
-	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/main.o $(INCLUDE_FLAG) -o bin/goBin
+	gcc-8 -c -flto $(OPTIMIZATION_FLAGS) main.c $(INCLUDE_FLAG) -lm -o $(OBJ_FOLDER)/main.o
+	gcc-8 -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/main.o $(INCLUDE_FLAG) -o bin/goBin
 	rm -rf $(OBJ_FOLDER)/*.o
+	rm -rf $(INCLUDE_FOLDER)/*
+	make cleanLib
 
-tComp: cWrapper
-	gcc -c -flto $(OPTIMIZATION_FLAGS) otherCode/comparator_thor.c $(INCLUDE_FLAG) -o $(OBJ_FOLDER)/comparator.o
-	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/comparator.o  -fopenmp $(INCLUDE_FLAG) -o bin/tComp
+tComp:
+	make cWrapper
+	gcc-8 -c -flto $(OPTIMIZATION_FLAGS) otherCode/comparator_thor.c $(INCLUDE_FLAG) -o $(OBJ_FOLDER)/comparator.o
+	gcc-8 -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/comparator.o  -fopenmp $(INCLUDE_FLAG) -o bin/tComp
 	rm -rf $(OBJ_FOLDER)/*.o
+	
 
 clean:
 	rm -rf bin/
+
+cleanLib:
 	rm -rf $(CONV_FOLDER)/libWrapper.o
 	rm -rf $(CONV_FOLDER)/libConv.*
+	rm -rf bin/include/*
+	rm -rf bin/obj/*
 
 all: clean setup goBin cBin tComp
