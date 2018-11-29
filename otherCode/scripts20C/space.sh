@@ -10,8 +10,8 @@ cd /lustre/cmsc714-1nzb/final/repo
 
 IMAGE="space"
 EXT="png"
-BIN="goBin"
-ENV_VAR="GOMAXPROCS"
+BIN="cBin"
+ENV_VAR="OMP_NUM_THREADS"
 
 rm -rf output_$IMAGE/
 mkdir -p output_$IMAGE
