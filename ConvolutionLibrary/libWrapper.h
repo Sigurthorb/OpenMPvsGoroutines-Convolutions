@@ -20,6 +20,7 @@ int applyConvolution(struct Image* image, struct Kernel* kernel);
 
 int getMeanKernel(int kSize, struct Kernel* kernel);
 int getGaussianKernel(int kSize, float sigma, struct Kernel* kernel);
+int getEdgeKernel(int kSize, float sigma, struct Kernel* kernel);
 
 int writeImage(char* imagePath, struct Image* image);
 
