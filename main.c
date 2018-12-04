@@ -40,6 +40,11 @@ int main(int argc, char **argv) {
     kernelSuccess = getGaussianKernel(kernelSize, sigma, kernel);
   } else if (strcmp("mean", kernelName) == 0) {
     kernelSuccess = getMeanKernel(kernelSize, kernel);
+
+  } else if (strcmp("edge", kernelName) == 0) {
+    float sigma = atof(argv[5]);
+    kernelSuccess = getEdgeKernel(kernelSize, sigma, kernel);
+
   } else {
     printf("'%s' is not a supported kernel, must be 'gauss' or 'mean'", kernelName);
     exit(1);
