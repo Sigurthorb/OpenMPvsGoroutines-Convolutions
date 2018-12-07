@@ -40,6 +40,16 @@ int main(int argc, char **argv) {
     kernelSuccess = getGaussianKernel(kernelSize, sigma, kernel);
   } else if (strcmp("mean", kernelName) == 0) {
     kernelSuccess = getMeanKernel(kernelSize, kernel);
+
+  } else if (strcmp("edge", kernelName) == 0) {
+    if (argc < 6) {
+      printf("This tool must be used with 5 arguments with edge kernel\n");
+      printf("<Binary> <InputImage> <OutputImage> edge <KernelSize> <Sigma>\n");
+      exit(1);
+    }
+    float sigma = atof(argv[5]);
+    kernelSuccess = getEdgeKernel(kernelSize, sigma, kernel);
+
   } else {
     printf("'%s' is not a supported kernel, must be 'gauss' or 'mean'", kernelName);
     exit(1);
@@ -67,7 +77,7 @@ int main(int argc, char **argv) {
   }
 
   printf("Saving image\n");
-  int saveImageSuccess = saveImage(output, image);
+  int saveImageSuccess = writeImage(output, image);
   if(saveImageSuccess == 0) {
     printf("Failed to save image\n");
     exit(1);

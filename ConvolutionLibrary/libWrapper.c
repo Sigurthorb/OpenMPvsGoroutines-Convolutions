@@ -28,7 +28,7 @@ int readImage(char* imagePath, struct Image* image) {
     return 1;
 }
 
-int saveImage(char* imagePath, struct Image* image) {
+int writeImage(char* imagePath, struct Image* image) {
    char *dot = strrchr(imagePath, '.');
    int success = 0;
    if (dot) {
@@ -147,6 +147,46 @@ int getGaussianKernel(int kSize, float sigma, struct Kernel* kernel) {
 
     return 1;
 }
+
+int getEdgeKernel(int kSize, float sigma, struct Kernel* kernel) {
+    if(kernel == NULL || kSize <= 0 || kSize % 2 != 1) {
+        return 0;
+    }
+
+    int i, row, col, length = kSize*kSize;
+    // float value = 1.0/length;
+
+    kernel->size = kSize;
+    kernel->data = (float*)malloc(sizeof(float)*length);
+
+    double dAlpha = 0;
+    for (row = 0; row < kSize; row++)
+    {
+        for (col = 0; col < kSize; col++)
+        {
+            kernel->data[row * kSize + col] = -(1/(M_PI * pow(sigma, 4))) * (1 - (pow(row, 2) + pow(col, 2))/(2 * pow(sigma, 2)) ) * exp((-pow(row - kSize/2, 2)-pow(col - kSize/2, 2))/(2 * M_PI * pow(sigma, 2)));
+            // dAlpha += kernel->data[row * kSize + col];
+        }
+    }
+
+    // // Normalize the values of the kernel so that they range from 0 to 1
+    // for (row = 0; row < kSize; row++)
+    // {
+    //     for (col = 0; col < kSize; col++)
+    //     {
+    //         kernel->data[row * kSize + col] = kernel->data[row * kSize + col]/dAlpha;
+    //     }
+    // }
+
+    // for(i = 0; i < length; i++) {
+    //     kernel->data[i] = -1;
+    // }
+
+    // kernel->data[length/2] = length - 1;
+
+    return 1;
+}
+
 
 void freeKernel(struct Kernel* kernel) {
     free(kernel->data);

@@ -31,21 +31,29 @@ goWrapper:
 cBin: cWrapper
 	gcc -c -flto $(OPTIMIZATION_FLAGS) main.c  -lm -o $(OBJ_FOLDER)/main.o
 	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/main.o $(INCLUDE_FLAG) -fopenmp -o bin/cBin
-	rm -rf $(OBJ_FOLDER)/*.o
+	make cleanLib
 
 goBin: goWrapper
 	gcc -c -flto $(OPTIMIZATION_FLAGS) main.c $(INCLUDE_FLAG) -lm -o $(OBJ_FOLDER)/main.o
 	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/main.o $(INCLUDE_FLAG) -o bin/goBin
 	rm -rf $(OBJ_FOLDER)/*.o
+	rm -rf $(INCLUDE_FOLDER)/*
+	make cleanLib
 
-tComp: cWrapper
+tComp:
+	make cWrapper
 	gcc -c -flto $(OPTIMIZATION_FLAGS) otherCode/comparator_thor.c $(INCLUDE_FLAG) -o $(OBJ_FOLDER)/comparator.o
 	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/comparator.o  -fopenmp $(INCLUDE_FLAG) -o bin/tComp
 	rm -rf $(OBJ_FOLDER)/*.o
+	
 
 clean:
 	rm -rf bin/
+
+cleanLib:
 	rm -rf $(CONV_FOLDER)/libWrapper.o
 	rm -rf $(CONV_FOLDER)/libConv.*
+	rm -rf bin/include/*
+	rm -rf bin/obj/*
 
 all: clean setup goBin cBin tComp
