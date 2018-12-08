@@ -11,7 +11,7 @@ void Convolution(unsigned char* paddedInput, unsigned char* output, int height, 
     double dValueKernel = 0;
     double dAgg = 0;
     unsigned char ucAgg = 0;
-    int chunkSize = 1;
+    int chunkSize = width;
 
     pid_t processID = getpid();
 

@@ -11,7 +11,7 @@ void Convolution(unsigned char* paddedInput, unsigned char* output, int height, 
     double dValueKernel = 0;
     double dAgg = 0;
     unsigned char ucAgg = 0;
-    int chunkSize = 1;
+    int chunkSize = width;
 
     pid_t processID = getpid();
 
@@ -25,7 +25,7 @@ void Convolution(unsigned char* paddedInput, unsigned char* output, int height, 
     int paddedInputHeight = height + (kSize/2) * 2;
     int paddedInputWidth = width + (kSize/2) * 2;
     // perform convolutions
-#pragma omp parallel for private(col, ch, krow, kcol, ucValue, dValueKernel, dAgg, ucAgg) collapse(2) schedule(dynamic, chunkSize)
+#pragma omp parallel for private(col, ch, krow, kcol, ucValue, dValueKernel, dAgg, ucAgg) collapse(2) schedule(static, chunkSize)
     for(row = kSize/2; row < paddedInputHeight - kSize/2; row++)
     {
         for(col = kSize/2; col < paddedInputWidth - kSize/2; col++)
