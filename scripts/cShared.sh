@@ -1,23 +1,10 @@
 #!/bin/bash
 
-#SBATCH -N 1
-#SBATCH --exclusive
-#SBATCH -t 02:00:00
-
-#. ~/.profile
-
-#cd /lustre/cmsc714-1nzb/final/repo
-cd ..
+cd /lustre/cmsc714-1nzb/final/repo
+#cd ..
 
 
-
-BIN1="cBlockBin"
-BIN2="cCycleBin"
-Bin3="cCycleCollapse"
 ENV_VAR="OMP_NUM_THREADS"
-
-rm -rf output_$IMAGE/
-mkdir -p output_$IMAGE
 
 # Kernel, Size, Num_Threads, Sigma
 function run() {
@@ -40,6 +27,7 @@ function run() {
     echo ""
     echo ""
 }
+
 SECONDS=0
 # BINARY IMAGENAME TYPE SIZE
 echo "-- $1 -- $2.$3 "
@@ -55,10 +43,8 @@ run $1 $2 $3 gauss 25 1 6.0
 run $1 $2 $3 gauss 25 10 6.0
 run $1 $2 $3 gauss 25 20 6.0
 
-echo "-- $1 -- $2.$3 "
-
 duration=$SECONDS
 echo "$(($duration / 60)) minutes and $(($duration % 60)) seconds elapsed."
-
+echo "-- $1 -- $2.$3 "
 
 
