@@ -24,9 +24,10 @@ void Convolution(unsigned char* paddedInput, unsigned char* output, int height, 
     int log = 0;
 
     // perform convolutions
-#pragma omp parallel for private(col, ch, krow, kcol, ucValue, dValueKernel, dAgg, ucAgg, log)
+#pragma omp parallel private(col, ch, krow, kcol, ucValue, dValueKernel, dAgg, ucAgg, log)
     for(row = kSize/2; row < paddedInputHeight - kSize/2; row++)
     {
+#pragma omp parallel for
         for(col = kSize/2; col < paddedInputWidth - kSize/2; col++)
         {
             for (ch = 0; ch < channels; ch++)
