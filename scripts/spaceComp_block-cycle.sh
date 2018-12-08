@@ -2,7 +2,7 @@
 
 #SBATCH -N 1
 #SBATCH --exclusive
-#SBATCH -t 04:00:00
+#SBATCH -t 00:40:00
 
 #. ~/.profile
 
@@ -11,7 +11,7 @@ cd /lustre/cmsc714-1nzb/final/repo
 IMAGE="space"
 EXT="png"
 BIN1="cBlockBin"
-BIN2="cCyckeBin"
+BIN2="cCycleBin"
 ENV_VAR="OMP_NUM_THREADS"
 
 rm -rf output_$IMAGE/
