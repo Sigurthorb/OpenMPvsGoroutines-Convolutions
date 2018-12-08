@@ -45,10 +45,13 @@ function run() {
 }
 
 function all() {
+    run gauss 5 10 6.0
     run gauss 5 20 6.0
     echo ""
+    run gauss 13 10 6.0
     run gauss 13 20 6.0
     echo ""
+    run gauss 25 10 6.0
     run gauss 25 20 6.0
     echo ""
 }
