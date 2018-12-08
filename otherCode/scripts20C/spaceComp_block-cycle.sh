@@ -34,11 +34,11 @@ function run() {
     done
     echo ""
     echo ""
-    echo "Size: $size - Threads: $threads - Bin: $BIN1 - Image: $IMAGE.$EXT - kernel: $kernel"
+    echo "Size: $size - Threads: $threads - Bin: $BIN2 - Image: $IMAGE.$EXT - kernel: $kernel"
 
     for i in {1..3}
     do
-        ./bin/$BIN1 input/$IMAGE.$EXT output_$IMAGE/${IMAGE}.$EXT $kernel $size $sigma 1> /dev/null
+        ./bin/$BIN2 input/$IMAGE.$EXT output_$IMAGE/${IMAGE}.$EXT $kernel $size $sigma 1> /dev/null
     done
     echo ""
     echo ""
