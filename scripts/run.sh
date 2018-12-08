@@ -26,15 +26,18 @@ function buildBinary() {
 
 function runImages() {
      buildBinary $1
-     sbatch LadyCompScript.sh $1
-     sbatch WaterfallCompScript.sh $1
-     sbatch HouseCompScript.sh $1
+     #sbatch LadyCompScript.sh $1
+     #sbatch WaterfallCompScript.sh $1
+     #sbatch HouseCompScript.sh $1
 }
 
 #runImages "Block"
 runImages "CycleDynamic"
-runImages "CycleCollapseStatic"
-runImages "CycleCollapseStaticKSize"
+runImages "CycleStatic"
+
+runImages "CycleStaticKSize"
+runImages "CycleDynamicKSize"
+
 runImages "CycleDynCollapse_w-div-ksize"
 runImages "CycleStaticCollapse_w-div-ksize"
 
