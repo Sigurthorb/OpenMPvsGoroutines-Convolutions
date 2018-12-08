@@ -13,12 +13,24 @@ setup:
 	mkdir -p $(OBJ_FOLDER)
 	mkdir $(INCLUDE_FOLDER)
 	
-cWrapper:
-	cp $(C_FOLDER)/libConv.* $(CONV_FOLDER)/
+cWrapperBlock:
+	cp $(C_FOLDER)/libConv.h $(CONV_FOLDER)/
+	cp $(C_FOLDER)/libConvBlock.c $(CONV_FOLDER)/libConv.c
 	gcc -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libConv.c -fopenmp -o $(OBJ_FOLDER)/libConv.o
 	gcc -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libWrapper.c -lm -o $(OBJ_FOLDER)/libWrapper.o 
 	ar rcs $(INCLUDE_FOLDER)/libWrapper.a $(OBJ_FOLDER)/libWrapper.o $(OBJ_FOLDER)/libConv.o
-	rm -rf $(OBJ_FOLDER)/*.o	
+	rm -rf $(OBJ_FOLDER)/*.o
+	rm -rf $(CONV_FOLDER)/libConv.*
+
+cWrapperCycle:
+	cp $(C_FOLDER)/libConv.h $(CONV_FOLDER)/
+	cp $(C_FOLDER)/libConvCycle.c $(CONV_FOLDER)/libConv.c
+	gcc -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libConv.c -fopenmp -o $(OBJ_FOLDER)/libConv.o
+	gcc -c $(OPTIMIZATION_FLAGS) $(CONV_FOLDER)/libWrapper.c -lm -o $(OBJ_FOLDER)/libWrapper.o 
+	ar rcs $(INCLUDE_FOLDER)/libWrapper.a $(OBJ_FOLDER)/libWrapper.o $(OBJ_FOLDER)/libConv.o
+	rm -rf $(OBJ_FOLDER)/*.o
+	rm -rf $(CONV_FOLDER)/libConv.*
+	
 	
 goWrapper:
 	go build -o $(CONV_FOLDER)/libConv.a -buildmode=c-archive ConvolutionLibrary/go/main.go
@@ -28,9 +40,14 @@ goWrapper:
 	ar rcs $(INCLUDE_FOLDER)/libWrapper.a $(OBJ_FOLDER)/*.o
 	rm -rf $(OBJ_FOLDER)/*.o
 
-cBin: cWrapper
+cBlockBin: cWrapperBlock
 	gcc -c -flto $(OPTIMIZATION_FLAGS) main.c  -lm -o $(OBJ_FOLDER)/main.o
-	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/main.o $(INCLUDE_FLAG) -fopenmp -o bin/cBin
+	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/main.o $(INCLUDE_FLAG) -fopenmp -o bin/cBlockBin
+	make cleanLib
+
+cCycleBin: cWrapperCycle
+	gcc -c -flto $(OPTIMIZATION_FLAGS) main.c  -lm -o $(OBJ_FOLDER)/main.o
+	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/main.o $(INCLUDE_FLAG) -fopenmp -o bin/cCycleBin
 	make cleanLib
 
 goBin: goWrapper
@@ -41,7 +58,7 @@ goBin: goWrapper
 	make cleanLib
 
 tComp:
-	make cWrapper
+	make cWrapperCycle
 	gcc -c -flto $(OPTIMIZATION_FLAGS) otherCode/comparator_thor.c $(INCLUDE_FLAG) -o $(OBJ_FOLDER)/comparator.o
 	gcc -flto $(OPTIMIZATION_FLAGS) $(OBJ_FOLDER)/comparator.o  -fopenmp $(INCLUDE_FLAG) -o bin/tComp
 	rm -rf $(OBJ_FOLDER)/*.o
@@ -56,4 +73,4 @@ cleanLib:
 	rm -rf bin/include/*
 	rm -rf bin/obj/*
 
-all: clean setup goBin cBin tComp
+all: clean setup goBin cBlockBin cCycleBin tComp
