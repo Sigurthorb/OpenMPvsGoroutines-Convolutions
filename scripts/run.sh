@@ -26,9 +26,9 @@ function buildBinary() {
 
 function runImages() {
      buildBinary $1
-     #sbatch LadyCompScript.sh $1
-     #sbatch WaterfallCompScript.sh $1
-     #sbatch HouseCompScript.sh $1
+     sbatch LadyCompScript.sh $1
+     sbatch WaterfallCompScript.sh $1
+     sbatch HouseCompScript.sh $1
 }
 
 #runImages "Block"
