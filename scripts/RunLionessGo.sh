@@ -2,7 +2,7 @@
 
 #SBATCH -N 1
 #SBATCH --exclusive
-#SBATCH -t 00:30:00
+#SBATCH -t 00:06:00
 
 echo "LIONESS.JPG - goBin"
 ./shared.sh "goBin" "lioness" "jpg" "GOMAXPROCS"

@@ -21,7 +21,7 @@ function run() {
 
     echo "Size: $size - Threads: $threads"
 
-    for i in {1..2}
+    for i in {1..3}
     do
         ./bin/$binary input/$img.$ext output/img.$ext $kernel $size $sigma 1> /dev/null
     done

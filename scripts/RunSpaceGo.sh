@@ -6,12 +6,12 @@
 #SBATCH -t 04:30:00
 
 cd /lustre/cmsc714-1nzb/final/repoMaster
-
+#cd ..
 ENV_VAR="GOMAXPROCS"
 
 bin="goBin"
-img="space"
-ext="png"
+img1="space"
+ext1="png"
 
 # Kernel, Size, Num_Threads, Sigma
 function run() {
@@ -22,8 +22,10 @@ function run() {
     size=$5
     threads=$6
     sigma=$7
+    
 
     export $ENV_VAR=$threads
+
 
     echo "Size: $size - Threads: $threads"
 
@@ -37,16 +39,19 @@ function run() {
 
 SECONDS=0
 # BINARY IMAGENAME TYPE SIZE
-echo "-- $bin -- $img1.$ext1 "
+echo "-- $bin -- $img1.$ext1 -- Cores: `cat /proc/cpuinfo | awk '/^processor/{print $3}' | wc -l`"
 run $bin $img1 $ext1 gauss 5 40 6.0
 run $bin $img1 $ext1 gauss 13 40 6.0
 run $bin $img1 $ext1 gauss 25 40 6.0
+
 run $bin $img1 $ext1 gauss 5 20 6.0
 run $bin $img1 $ext1 gauss 13 20 6.0
 run $bin $img1 $ext1 gauss 25 20 6.0
+
 run $bin $img1 $ext1 gauss 5 10 6.0
 run $bin $img1 $ext1 gauss 13 10 6.0
 run $bin $img1 $ext1 gauss 25 10 6.0
+
 run $bin $img1 $ext1 gauss 5 1 6.0
 run $bin $img1 $ext1 gauss 13 1 6.0
 run $bin $img1 $ext1 gauss 25 1 6.0
