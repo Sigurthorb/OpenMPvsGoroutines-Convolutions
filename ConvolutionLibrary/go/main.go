@@ -22,21 +22,19 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 	output := (*[1 << 31]C.uchar)(unsafe.Pointer(outputPtr))[: height*outputStep : height*outputStep]
 	kernel := (*[1 << 31]C.float)(unsafe.Pointer(kernelPtr))[: kSize*kSize : kSize*kSize]
 
-	numCol := float64(width) / float64(routines)
-
-	worker := func(id float64) {
+	worker := func(id int) {
 		runtime.LockOSThread()
 		var startKRow, startKCol, endKRow, endKCol, ai, aj, ac, rInput, cInput, rOutput, cOutput, channelStartLoc int
 		var val C.float
 		var sum = []C.float{0.0, 0.0, 0.0, 0.0}
 
-		rInput = k
-		rOutput = 0
+		rInput = id + k
+		rOutput = id
 
 		for rInput < height+k {
-			cInput = int(numCol*id) + k
-			cOutput = int(numCol * id)
-			for cInput < int(numCol*id+numCol)+k {
+			cInput = k
+			cOutput = 0
+			for cInput < width+k {
 
 				startKRow = rInput - k
 				startKCol = cInput - k
@@ -70,19 +68,19 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 
 			}
 
-			rInput++
-			rOutput++
+			rInput += routines
+			rOutput += routines
 		}
 		runtime.UnlockOSThread()
 		wg.Done()
 	}
 	for i := 0; i < routines-1; i++ {
 		wg.Add(1)
-		go worker(float64(i))
+		go worker(i)
 	}
 
 	wg.Add(1)
-	worker(float64(routines - 1))
+	worker(routines - 1)
 	wg.Wait()
 }
 
