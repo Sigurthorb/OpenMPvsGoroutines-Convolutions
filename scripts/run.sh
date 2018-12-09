@@ -19,9 +19,9 @@ function comp() {
 
 function runGoBin() {
     comp $1
-    ./RunWaterfallGo.sh $1
-    ./RunLionessGo.sh $1
-    ./RunHouseGo.sh $1
+    sbatch RunWaterfallGo.sh $1
+    sbatch RunLionessGo.sh $1
+    sbatch RunHouseGo.sh $1
 }
 
 runGoBin "StaticCyclicColBlocks"

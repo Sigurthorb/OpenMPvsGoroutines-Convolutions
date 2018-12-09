@@ -1,8 +1,8 @@
 
 #!/bin/bash
 
-#cd /lustre/cmsc714-1nzb/final/repo
-cd ..
+cd /lustre/cmsc714-1nzb/final/repo
+#cd ..
 
 
 ENV_VAR=$4
@@ -34,15 +34,15 @@ SECONDS=0
 echo "-- $1 -- $2.$3 "
 run $1 $2 $3 gauss 5 1 6.0
 run $1 $2 $3 gauss 5 10 6.0
-#run $1 $2 $3 gauss 5 20 6.0
+run $1 $2 $3 gauss 5 20 6.0
 
-#run $1 $2 $3 gauss 13 1 6.0
+run $1 $2 $3 gauss 13 1 6.0
 run $1 $2 $3 gauss 13 10 6.0
-#run $1 $2 $3 gauss 13 20 6.0
+run $1 $2 $3 gauss 13 20 6.0
 
-#run $1 $2 $3 gauss 25 1 6.0
+run $1 $2 $3 gauss 25 1 6.0
 run $1 $2 $3 gauss 25 10 6.0
-#run $1 $2 $3 gauss 25 20 6.0
+run $1 $2 $3 gauss 25 20 6.0
 
 duration=$SECONDS
 echo "$(($duration / 60)) minutes and $(($duration % 60)) seconds elapsed."
