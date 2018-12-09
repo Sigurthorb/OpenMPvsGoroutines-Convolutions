@@ -31,17 +31,26 @@ function run() {
 
 SECONDS=0
 # BINARY IMAGENAME TYPE SIZE
-echo "-- $1 -- $2.$3 "
+echo "-- $1 -- $2.$3 -- Cores: `cat /proc/cpuinfo | awk '/^processor/{print $3}' | wc -l`"
 run $1 $2 $3 gauss 5 1 6.0
-run $1 $2 $3 gauss 5 10 6.0
+run $1 $2 $3 gauss 5 2 6.0
+run $1 $2 $3 gauss 5 4 6.0
+run $1 $2 $3 gauss 5 8 6.0
+run $1 $2 $3 gauss 5 16 6.0
 run $1 $2 $3 gauss 5 20 6.0
 
 run $1 $2 $3 gauss 13 1 6.0
-run $1 $2 $3 gauss 13 10 6.0
+run $1 $2 $3 gauss 13 2 6.0
+run $1 $2 $3 gauss 13 4 6.0
+run $1 $2 $3 gauss 13 8 6.0
+run $1 $2 $3 gauss 13 16 6.0
 run $1 $2 $3 gauss 13 20 6.0
 
 run $1 $2 $3 gauss 25 1 6.0
-run $1 $2 $3 gauss 25 10 6.0
+run $1 $2 $3 gauss 25 2 6.0
+run $1 $2 $3 gauss 25 4 6.0
+run $1 $2 $3 gauss 25 8 6.0
+run $1 $2 $3 gauss 25 16 6.0
 run $1 $2 $3 gauss 25 20 6.0
 
 duration=$SECONDS
