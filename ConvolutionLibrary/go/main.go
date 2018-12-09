@@ -22,27 +22,27 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 	output := (*[1 << 31]C.uchar)(unsafe.Pointer(outputPtr))[: height*outputStep : height*outputStep]
 	kernel := (*[1 << 31]C.float)(unsafe.Pointer(kernelPtr))[: kSize*kSize : kSize*kSize]
 
-	worker := func(id int) {
+	numCol := float64(width) / float64(routines)
+
+	worker := func(id float64) {
 		runtime.LockOSThread()
 		var startKRow, startKCol, endKRow, endKCol, ai, aj, ac, rInput, cInput, rOutput, cOutput, channelStartLoc int
 		var val C.float
-		var sum []C.float
+		var sum = []C.float{0.0, 0.0, 0.0, 0.0}
 
-		rInput = id + k
-		rOutput = id
+		rInput = k
+		rOutput = 0
 
 		for rInput < height+k {
-			cInput = k
-			cOutput = 0
-			for cInput < width+k {
+			cInput = int(numCol*id) + k
+			cOutput = int(numCol * id)
+			for cInput < int(numCol*id+numCol)+k {
 
 				startKRow = rInput - k
 				startKCol = cInput - k
 
 				endKRow = rInput + k
 				endKCol = cInput + k
-
-				sum = []C.float{0.0, 0.0, 0.0, 0.0}
 
 				for ai = startKRow; ai <= endKRow; ai++ {
 					for aj = startKCol; aj <= endKCol; aj++ {
@@ -62,6 +62,7 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 					}
 
 					output[channelStartLoc+ac] = C.uchar(val)
+					sum[ac] = 0.0
 				}
 
 				cInput++
@@ -69,21 +70,19 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 
 			}
 
-			rInput += routines
-			rOutput += routines
+			rInput++
+			rOutput++
 		}
 		runtime.UnlockOSThread()
 		wg.Done()
 	}
-
 	for i := 0; i < routines-1; i++ {
 		wg.Add(1)
-		go worker(i)
+		go worker(float64(i))
 	}
 
 	wg.Add(1)
-	worker(routines - 1)
-
+	worker(float64(routines - 1))
 	wg.Wait()
 }
 

@@ -25,7 +25,7 @@ void Convolution(unsigned char* paddedInput, unsigned char* output, int height, 
     int paddedInputHeight = height + kHalf * 2;
     int paddedInputWidth = width + kHalf * 2;
 
-#pragma omp parallel for private(col, row, ch, krow, kcol, ucValue, dValueKernel, dAgg, ucAgg) collapse(2) schedule(dynamic, chunkSize)
+#pragma omp parallel for private(col, row, ch, krow, kcol, ucValue, dValueKernel, dAgg, ucAgg) collapse(2) schedule(static, chunkSize)
     for(row = kHalf; row < paddedInputHeight - kHalf; row++)
     {
         for(col = kHalf; col < paddedInputWidth - kHalf; col++)
