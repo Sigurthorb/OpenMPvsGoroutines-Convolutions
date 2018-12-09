@@ -26,7 +26,7 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 		runtime.LockOSThread()
 		var startKRow, startKCol, endKRow, endKCol, ai, aj, ac, rInput, cInput, rOutput, cOutput, channelStartLoc int
 		var val C.float
-		var sum []C.float
+		var sum = []C.float{0.0, 0.0, 0.0, 0.0}
 
 		rInput = id + k
 		rOutput = id
@@ -41,8 +41,6 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 
 				endKRow = rInput + k
 				endKCol = cInput + k
-
-				sum = []C.float{0.0, 0.0, 0.0, 0.0}
 
 				for ai = startKRow; ai <= endKRow; ai++ {
 					for aj = startKCol; aj <= endKCol; aj++ {
@@ -62,6 +60,7 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 					}
 
 					output[channelStartLoc+ac] = C.uchar(val)
+					sum[ac] = 0.0
 				}
 
 				cInput++
@@ -75,7 +74,6 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 		runtime.UnlockOSThread()
 		wg.Done()
 	}
-
 	for i := 0; i < routines-1; i++ {
 		wg.Add(1)
 		go worker(i)
@@ -83,7 +81,6 @@ func Convolution(inputPtr *C.uchar, outputPtr *C.uchar, height, width, channels 
 
 	wg.Add(1)
 	worker(routines - 1)
-
 	wg.Wait()
 }
 
