@@ -3,7 +3,7 @@
 #SBATCH -N 1
 #SBATCH --mem=140000
 #SBATCH --exclusive
-#SBATCH -t 02:00:00
+#SBATCH -t 04:30:00
 
 cd /lustre/cmsc714-1nzb/final/repoMaster
 
@@ -41,6 +41,12 @@ echo "-- $bin -- $img1.$ext1 "
 run $bin $img1 $ext1 gauss 5 40 6.0
 run $bin $img1 $ext1 gauss 13 40 6.0
 run $bin $img1 $ext1 gauss 25 40 6.0
+run $bin $img1 $ext1 gauss 5 20 6.0
+run $bin $img1 $ext1 gauss 13 20 6.0
+run $bin $img1 $ext1 gauss 25 20 6.0
+run $bin $img1 $ext1 gauss 5 10 6.0
+run $bin $img1 $ext1 gauss 13 10 6.0
+run $bin $img1 $ext1 gauss 25 10 6.0
 run $bin $img1 $ext1 gauss 5 1 6.0
 run $bin $img1 $ext1 gauss 13 1 6.0
 run $bin $img1 $ext1 gauss 25 1 6.0
