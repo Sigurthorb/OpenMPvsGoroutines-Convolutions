@@ -164,7 +164,9 @@ int getEdgeKernel(int kSize, float sigma, struct Kernel* kernel) {
     {
         for (col = 0; col < kSize; col++)
         {
-            kernel->data[row * kSize + col] = -(1/(M_PI * pow(sigma, 4))) * (1 - (pow(row, 2) + pow(col, 2))/(2 * pow(sigma, 2)) ) * exp((-pow(row - kSize/2, 2)-pow(col - kSize/2, 2))/(2 * M_PI * pow(sigma, 2)));
+            int fix_row = row - kSize/2;
+            int fix_col = col - kSize/2;
+            kernel->data[row * kSize + col] = -(1/(M_PI * pow(sigma, 4))) * (1 - (pow(fix_row, 2) + pow(fix_col, 2))/(2 * pow(sigma, 2)) ) * exp(-(pow(fix_row, 2) + pow(fix_col, 2))/(2 * pow(sigma, 2)));
             // dAlpha += kernel->data[row * kSize + col];
         }
     }
